@@ -37,7 +37,7 @@ class Cryptex(object):
         token = (timestamp + tag + nonce + ciphertext)
         return base64.b64encode(token)
 
-    def decrypt(self, token, expires_in=None):
+    def decrypt(self, token, ttl=None):
         token = base64.b64decode(token)
 
         metadata = token[:36]
@@ -57,9 +57,9 @@ class Cryptex(object):
         cipher.update(timestamp)
         plaintext = cipher.decrypt_and_verify(ciphertext, tag)
 
-        if expires_in is not None:
+        if ttl is not None:
             timestamp = struct.unpack('<L', timestamp)[0]
-            if timestamp + expires_in < int(time.time()):
+            if timestamp + ttl < int(time.time()):
                 raise ValueError(
                     'Token is past expiration time.')
         return plaintext
