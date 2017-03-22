@@ -13,7 +13,7 @@ _NONCE_LENGTH = 16
 
 class Cryptex(object):
     def __init__(self, key):
-        self.key = base64.b64decode(key)
+        self.key = base64.urlsafe_b64decode(key)
         if len(self.key) != _AES_256_KEYSIZE_BYTES:
             raise ValueError(
                 'Keysize is invalid. Key must be 32 bytes.')
@@ -39,10 +39,10 @@ class Cryptex(object):
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
         token = (timestamp + tag + nonce + ciphertext)
-        return base64.b64encode(token)
+        return base64.urlsafe_b64encode(token)
 
     def decrypt(self, token):
-        token = base64.b64decode(token)
+        token = base64.urlsafe_b64decode(token)
 
         metadata = token[:36]
         ciphertext = token[36:]
@@ -70,4 +70,4 @@ class Cryptex(object):
         return plaintext
 
     def generate_key():
-        return base64.b64encode(get_random_bytes(32))
+        return base64.urlsafe_b64encode(get_random_bytes(32))
