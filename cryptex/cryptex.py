@@ -7,8 +7,8 @@ from Cryptodome.Random import get_random_bytes
 
 
 _AES_256_KEYSIZE_BYTES = 32
-_TAG_DIGEST_LENGTH = 16
-_NONCE_LENGTH = 16
+_TAG_DIGEST_LENGTH_BYTES = 16
+_NONCE_LENGTH_BYTES = 16
 
 
 class Cryptex(object):
@@ -19,13 +19,13 @@ class Cryptex(object):
                 'Keysize is invalid. Key must be 32 bytes.')
 
     def encrypt(self, data, ttl=None):
-        nonce = get_random_bytes(_NONCE_LENGTH)
+        nonce = get_random_bytes(_NONCE_LENGTH_BYTES)
 
         cipher = AES.new(
             self.key,
             AES.MODE_GCM,
             nonce=nonce,
-            mac_len=_TAG_DIGEST_LENGTH
+            mac_len=_TAG_DIGEST_LENGTH_BYTES
         )
 
         current_time = int(time.time())
@@ -56,7 +56,7 @@ class Cryptex(object):
             self.key,
             AES.MODE_GCM,
             nonce=nonce,
-            mac_len=_TAG_DIGEST_LENGTH
+            mac_len=_TAG_DIGEST_LENGTH_BYTES
         )
 
         cipher.update(timestamp)
