@@ -91,6 +91,27 @@ class TestCryptex(unittest.TestCase):
             self.fail("Decryption failed with {}".format(e))
         self.assertEqual(self.test_data, plaintext)
 
+    def test_multicryptex_ttl_encryption_and_decryption(self):
+        keys = [Cryptex.generate_key() for _ in range(2)]
+        multicryptex = MultiCryptex(keys)
+
+        try:
+            token = multicryptex.encrypt(self.test_data, ttl=5)
+        except Exception as e:
+            self.fail("Encryption failed with {}".format(e))
+        self.assertNotEqual(self.test_data, token)
+
+        try:
+            plaintext = multicryptex.decrypt(token)
+        except Exception as e:
+            self.fail("Decryption failed with {}".format(e))
+        self.assertEqual(self.test_data, plaintext)
+
+        # Test ttl by sleeping over expiration time
+        time.sleep(6)
+        with self.assertRaises(ValueError):
+            multicryptex.decrypt(token)
+
     def test_multicryptex_no_key_error(self):
         keys = [Cryptex.generate_key() for _ in range(2)]
         multicryptex = MultiCryptex(keys)
