@@ -1,4 +1,5 @@
 from .cryptex import Cryptex
+from .errors import NoValidKeyError
 
 
 class MultiCryptex(object):
@@ -15,4 +16,6 @@ class MultiCryptex(object):
             except ValueError:
                 continue
         else:
-            raise ValueError("No valid key found or token expired.")
+            raise NoValidKeyError(
+                "No valid key in keylist."
+            )
