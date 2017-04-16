@@ -4,6 +4,7 @@ import time
 
 from Cryptodome.Random import get_random_bytes
 from cryptex import Cryptex, MultiCryptex
+from cryptex.errors import KeysizeError, ExpirationError, NoValidKeyError
 
 
 class TestCryptex(unittest.TestCase):
@@ -19,7 +20,7 @@ class TestCryptex(unittest.TestCase):
     def test_keysize_error(self):
         # Create a key with an invalid keysize for AES-256
         invalid_key = base64.urlsafe_b64encode(get_random_bytes(16))
-        with self.assertRaises(ValueError):
+        with self.assertRaises(KeysizeError):
             Cryptex(invalid_key)
 
     def test_encryption_and_decryption(self):
@@ -53,7 +54,7 @@ class TestCryptex(unittest.TestCase):
 
         # Test ttl by sleeping over expiration time
         time.sleep(6)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ExpirationError):
             cryptex.decrypt(token)
 
     def test_multicryptex_encryption_and_decryption(self):
@@ -109,7 +110,7 @@ class TestCryptex(unittest.TestCase):
 
         # Test ttl by sleeping over expiration time
         time.sleep(6)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ExpirationError):
             multicryptex.decrypt(token)
 
     def test_multicryptex_no_key_error(self):
@@ -122,5 +123,5 @@ class TestCryptex(unittest.TestCase):
             self.fail("Encryption failed with {}".format(e))
         self.assertNotEqual(self.test_data, token)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NoValidKeyError):
             multicryptex.decrypt(token)
