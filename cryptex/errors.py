@@ -20,3 +20,15 @@ class ExpirationError(Exception):
     def __init__(self, message, expired):
         self.message = message
         self.expired = expired
+
+
+class NoValidKeyError(Exception):
+    """Raised when no valid key could be used during multicryptex decryption.
+
+    Attributes:
+        message -- explanation of error
+    """
+
+
+    def __init__(self, message):
+        self.message = message
