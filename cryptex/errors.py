@@ -1,4 +1,10 @@
-class KeysizeError(Exception):
+class CryptexError(Exception):
+    """Generic base class for all Cryptex errors.
+    """
+    pass
+
+
+class KeysizeError(CryptexError):
     """Raised when keysize is invalid for the Cryptex operation.
 
     Attributes:
@@ -9,7 +15,7 @@ class KeysizeError(Exception):
         self.message = message
 
 
-class ExpirationError(Exception):
+class ExpirationError(CryptexError):
     """Raised when the token is past the expiration ttl length.
 
     Attributes:
@@ -22,13 +28,12 @@ class ExpirationError(Exception):
         self.expired = expired
 
 
-class NoValidKeyError(Exception):
+class NoValidKeyError(CryptexError):
     """Raised when no valid key could be used during multicryptex decryption.
 
     Attributes:
         message -- explanation of error
     """
-
 
     def __init__(self, message):
         self.message = message
