@@ -10,7 +10,7 @@ from .errors import KeysizeError, ExpirationError
 
 _AES_256_KEYSIZE_BYTES = 32
 _TAG_DIGEST_LENGTH_BYTES = 16
-_NONCE_LENGTH_BYTES = 16
+_NONCE_LENGTH_BYTES = 12
 
 
 class Cryptex(object):
