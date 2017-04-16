@@ -5,6 +5,8 @@ import time
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 
+from .errors import KeysizeError, ExpirationError
+
 
 _AES_256_KEYSIZE_BYTES = 32
 _TAG_DIGEST_LENGTH_BYTES = 16
@@ -15,8 +17,9 @@ class Cryptex(object):
     def __init__(self, key):
         self.key = base64.urlsafe_b64decode(key)
         if len(self.key) != _AES_256_KEYSIZE_BYTES:
-            raise ValueError(
-                'Keysize is invalid. Key must be 32 bytes.')
+            raise KeysizeError(
+                'Keysize is invalid. Key must be 32 bytes.'
+            )
 
     def encrypt(self, data, ttl=None):
         nonce = get_random_bytes(_NONCE_LENGTH_BYTES)
@@ -65,8 +68,10 @@ class Cryptex(object):
         timestamp = struct.unpack('<L', timestamp)[0]
         if timestamp != 0:
             if current_time > timestamp:
-                raise ValueError(
-                    'Token is past expiration time.')
+                raise ExpirationError(
+                    'Token is past expiration time.',
+                    current_time - timestamp,
+                )
         return plaintext
 
     def generate_key():
