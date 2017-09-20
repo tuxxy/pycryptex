@@ -35,8 +35,8 @@ class Cryptex(object):
         if ttl is not None:
             timestamp = current_time + ttl
         else:
-            timestamp = 0000000000
-        timestamp = struct.pack('<L', timestamp)
+            timestamp = 0
+        timestamp = timestamp.to_bytes(8, byteorder='big')
         cipher.update(timestamp)
 
         ciphertext, tag = cipher.encrypt_and_digest(data)
@@ -50,9 +50,9 @@ class Cryptex(object):
         metadata = token[:36]
         ciphertext = token[36:]
 
-        timestamp = metadata[:4]
-        tag = metadata[4:20]
-        nonce = metadata[20:]
+        timestamp = metadata[:8]
+        tag = metadata[8:24]
+        nonce = metadata[24:]
         current_time = int(time.time())
 
         cipher = AES.new(
@@ -65,7 +65,7 @@ class Cryptex(object):
         cipher.update(timestamp)
         plaintext = cipher.decrypt_and_verify(ciphertext, tag)
 
-        timestamp = struct.unpack('<L', timestamp)[0]
+        timestamp = int.from_bytes(timestamp, byteorder='big')
         if timestamp != 0:
             if current_time > timestamp:
                 raise ExpirationError(
